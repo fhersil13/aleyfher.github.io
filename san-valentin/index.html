@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ale y Fher</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- favicon: use foto6 as site icon per request -->
+    <link rel="icon" href="fotos/foto6.jpeg" type="image/jpeg" />
+    <link rel="apple-touch-icon" href="fotos/foto6.jpeg" />
+  </head>
+  <body>
+    <div class="page-hearts" aria-hidden="true"></div>
+    <main class="container">
+      <section class="carousel" aria-label="Carrusel de fotos">
+        <div class="carousel-viewport">
+          <div class="bg-hearts" aria-hidden="true"></div>
+          <!-- opening cover (ribbon) that hides the photos until user clicks to reveal -->
+          <div
+            class="opening-cover"
+            id="openingCover"
+            role="button"
+            aria-label="Abrir carrusel"
+            tabindex="0"
+          >
+            <div class="ribbon">
+              <span class="r-bg left" aria-hidden="true"></span>
+              <span class="r-bg right" aria-hidden="true"></span>
+              <span class="r-text"><i>- - - Feliz día de San Valentín, mi amor - - -</i></span>
+            </div>
+          </div>
+          <div class="carousel-track" data-total="10">
+            <!-- slides -->
+            <div class="slide" data-index="0">
+              <img src="fotos/foto1.jpeg" alt="Foto 1" loading="lazy" />
+            </div>
+            <div class="slide" data-index="1">
+              <img src="fotos/foto2.jpeg" alt="Foto 2" loading="lazy" />
+            </div>
+            <div class="slide" data-index="2">
+              <img src="fotos/foto3.jpeg" alt="Foto 3" loading="lazy" />
+            </div>
+            <div class="slide" data-index="3">
+              <img src="fotos/foto4.jpeg" alt="Foto 4" loading="lazy" />
+            </div>
+            <div class="slide" data-index="4">
+              <img src="fotos/foto5.jpeg" alt="Foto 5" loading="lazy" />
+            </div>
+            <div class="slide" data-index="5">
+              <img src="fotos/foto6.jpeg" alt="Foto 6" loading="lazy" />
+            </div>
+            <div class="slide" data-index="6">
+              <img src="fotos/foto7.jpeg" alt="Foto 7" loading="lazy" />
+            </div>
+            <div class="slide" data-index="7">
+              <img src="fotos/foto8.jpeg" alt="Foto 8" loading="lazy" />
+            </div>
+            <div class="slide" data-index="8">
+              <img src="fotos/foto9.jpeg" alt="Foto 9" loading="lazy" />
+            </div>
+            <div class="slide" data-index="9">
+              <img src="fotos/foto10.jpeg" alt="Foto 10" loading="lazy" />
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-controls">
+          <div class="indicators" role="tablist" aria-label="Indicadores"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <small><i>Con cariño y mucho amor, Fher.<?= new Date().getFullYear() ?></i></small>
+      <div class="cover-hint">A&F🧡</div>
+    </footer>
+
+    <script>
+      (function () {
+        // Carousel behavior: slides, autoplay, thumbnails, keyboard, swipe
+        const track = document.querySelector('.carousel-track');
+        const slides = Array.from(track.querySelectorAll('.slide'));
+
+        const indicators = document.querySelector('.indicators');
+        let current = 0;
+        // don't start autoplay until the opening cover is dismissed
+        let autoplay = false;
+        let timer = null;
+
+        function goTo(index) {
+          index = (index + slides.length) % slides.length;
+          track.style.transform = `translateX(${-index * 100}%)`;
+          current = index;
+          // mark active slide for styling
+          slides.forEach((s, i) => s.classList.toggle('active', i === index));
+          updateIndicators();
+          // decorative hearts removed
+        }
+
+        function next() {
+          goTo(current + 1);
+        }
+        function prev() {
+          goTo(current - 1);
+        }
+
+        // indicators
+        slides.forEach((s, i) => {
+          const btn = document.createElement('button');
+          btn.setAttribute('aria-label', `Ir a la foto ${i + 1}`);
+          btn.addEventListener('click', () => goTo(i));
+          indicators.appendChild(btn);
+        });
+
+        function updateIndicators() {
+          Array.from(indicators.children).forEach((b, i) =>
+            b.classList.toggle('active', i === current)
+          );
+        }
+
+        // thumbnails, counter and fullscreen/download controls removed per user request
+
+        // autoplay (continuous)
+        function startAutoplay() {
+          stopAutoplay();
+          timer = setInterval(next, 4000);
+          autoplay = true;
+        }
+        function stopAutoplay() {
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+        }
+
+        // prev/next buttons removed from DOM (navigation still possible via dots, keys and swipe)
+
+        // keyboard support (left/right keys) - do not pause autoplay
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') prev();
+          if (e.key === 'ArrowRight') next();
+        });
+
+        // swipe support - do not pause autoplay
+        let startX = 0;
+        let deltaX = 0;
+        const threshold = 40;
+        track.addEventListener('pointerdown', (e) => {
+          startX = e.clientX;
+          track.setPointerCapture(e.pointerId);
+        });
+        track.addEventListener('pointermove', (e) => {
+          if (startX === 0) return;
+          deltaX = e.clientX - startX;
+        });
+        track.addEventListener('pointerup', (e) => {
+          if (Math.abs(deltaX) > threshold) {
+            if (deltaX > 0) prev();
+            else next();
+          }
+          startX = 0;
+          deltaX = 0;
+        });
+
+        // generate many floating hearts into a given container selector
+        // selector defaults to '.bg-hearts' for per-carousel hearts
+        function createBgHearts(count = 36, selector = '.bg-hearts') {
+          const container = document.querySelector(selector);
+          if (!container) return;
+          // small performance guard
+          const max = Math.min(Math.max(6, count), 200);
+          for (let i = 0; i < max; i++) {
+            const el = document.createElement('span');
+            el.className = 'bh';
+            el.innerText = '❤';
+            // randomized styles
+            const size = 8 + Math.round(Math.random() * 36); // px
+            el.style.fontSize = size + 'px';
+            el.style.left = Math.round(Math.random() * 100) + '%';
+            // vertical start varies depending on container type; use vh for page-wide
+            el.style.bottom = Math.random() * 100 - 10 + 'vh';
+            el.style.opacity = (0.35 + Math.random() * 0.65).toFixed(2);
+            const dur = 6 + Math.random() * 12; // seconds
+            el.style.animationDuration = dur.toFixed(2) + 's';
+            // negative delay so they appear at different phases immediately
+            el.style.animationDelay = (-Math.random() * dur).toFixed(2) + 's';
+            container.appendChild(el);
+          }
+        }
+
+        // initialize
+        // populate decorative background hearts (behind the carousel and across the page)
+        try {
+          const isMobile = window.matchMedia && window.matchMedia('(max-width: 720px)').matches;
+          if (isMobile) {
+            // fewer hearts on mobile for performance
+            createBgHearts(18, '.bg-hearts');
+            // optional: hide page-wide hearts on small screens (we still create a few)
+            createBgHearts(12, '.page-hearts');
+          } else {
+            createBgHearts(48, '.bg-hearts');
+            // page-wide hearts (cover whole body)
+            createBgHearts(84, '.page-hearts');
+          }
+        } catch (e) {
+          /* noop */
+        }
+        goTo(0);
+        slides.forEach((s, i) => s.classList.toggle('active', i === 0));
+        updateIndicators();
+
+        // opening cover behavior: remove on click (or Enter/Space) and start autoplay
+        const cover = document.getElementById('openingCover');
+        if (cover) {
+          const openNow = () => {
+            cover.classList.add('opened');
+            // after animation, remove from DOM
+            cover.addEventListener('transitionend', () => cover.remove(), { once: true });
+            // start autoplay when cover is removed
+            try {
+              startAutoplay();
+            } catch (e) {
+              /* noop */
+            }
+          };
+          cover.addEventListener('click', openNow);
+          cover.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openNow();
+            }
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

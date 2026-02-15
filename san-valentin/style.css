@@ -1,0 +1,437 @@
+/* Estilos para la galería de San Valentín */
+/* Estilos para la galería de San Valentín */
+:root {
+  --bg: #fff7fb;
+  --card: #fff;
+  --accent: #ff6b9a;
+  --muted: #666;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    'Helvetica Neue',
+    Arial;
+  margin: 0;
+  background: var(--bg);
+  color: #222;
+}
+.hero {
+  padding: 3rem 1rem;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(255, 107, 154, 0.08), transparent);
+  position: relative;
+  overflow: hidden;
+}
+/* hearts removed */
+.hero h1 {
+  font-size: 2.25rem;
+  margin: 0;
+  color: var(--accent);
+}
+.hero p {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+}
+.container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+/* ensure page content sits above the page-wide hearts layer */
+.container,
+.hero,
+.footer {
+  position: relative;
+  z-index: 2;
+}
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.card figcaption {
+  padding: 0.5rem 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.instructions {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 1rem;
+  text-align: center;
+}
+.footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--muted);
+}
+
+/* Carousel styles */
+.carousel {
+  position: relative;
+  margin: 1.5rem 0;
+}
+.carousel-viewport {
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  /* background behind photos set to black per user request */
+  background: #000;
+}
+
+/* opening cover (ribbon/talon) */
+.opening-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 60; /* sit above images */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.6rem;
+  pointer-events: auto;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 246, 250, 0.85));
+  transition:
+    transform 700ms cubic-bezier(0.2, 0.9, 0.25, 1),
+    opacity 500ms ease;
+}
+.ribbon {
+  position: relative;
+  display: inline-block;
+  padding: 0.9rem 2.1rem;
+  border-radius: 10px;
+  overflow: visible;
+  z-index: 62;
+}
+.ribbon .r-bg {
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: 120%;
+  background: linear-gradient(90deg, #ff9cbc 0%, #ff6b9a 100%);
+  box-shadow:
+    0 8px 30px rgba(255, 107, 154, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  transition:
+    transform 700ms cubic-bezier(0.2, 0.9, 0.25, 1),
+    opacity 420ms ease;
+  z-index: 60;
+}
+.ribbon .r-bg.left {
+  left: -10%;
+  transform: none;
+}
+.ribbon .r-bg.right {
+  right: -10%;
+  transform: none;
+}
+.ribbon .r-text {
+  position: relative;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.12rem;
+  z-index: 70;
+  display: inline-block;
+  transform-origin: center;
+}
+.cover-hint {
+  color: #b3476b;
+  font-size: 0.9rem;
+  opacity: 0.95;
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+/* open animation: the two bg halves slide away in opposite directions */
+.opening-cover.opened .r-bg.left {
+  transform: translateX(-120%) rotate(-8deg);
+  opacity: 0;
+}
+.opening-cover.opened .r-bg.right {
+  transform: translateX(120%) rotate(8deg);
+  opacity: 0;
+}
+.opening-cover.opened .r-text {
+  transform: translateY(-18px);
+  opacity: 0;
+  transition:
+    transform 520ms ease,
+    opacity 400ms ease;
+}
+.opening-cover.opened .cover-hint {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease;
+  will-change: transform;
+}
+.carousel-track {
+  position: relative;
+  z-index: 2;
+}
+.slide {
+  min-width: 100%;
+  position: relative;
+  background: #000; /* black background behind images */
+  filter: brightness(0.92) saturate(0.98);
+  transform: scale(1);
+  transition:
+    filter 0.45s ease,
+    transform 0.45s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 0; /* slightly smaller vertical padding */
+}
+.slide.active {
+  filter: brightness(1) saturate(1);
+  transform: scale(1.02);
+}
+.slide img {
+  max-width: 100%;
+  max-height: 80vh; /* keep images within viewport */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  background-color: transparent; /* show gradient instead of solid black */
+}
+.slide img {
+  position: relative;
+  z-index: 3;
+}
+
+/* Background hearts layer (soft, many, behind images) */
+.bg-hearts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.bg-hearts .bh {
+  position: absolute;
+  display: inline-block;
+  font-size: 14px;
+  color: rgba(255, 107, 154, 0.9);
+  opacity: 0.9;
+  transform: translateY(0);
+  will-change: transform, opacity;
+}
+
+@keyframes floatBg {
+  0% {
+    transform: translateY(12vh) translateX(0) scale(0.85);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-40vh) translateX(30px) scale(1.05);
+    opacity: 0;
+  }
+}
+
+.bg-hearts .bh {
+  animation-name: floatBg;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* page-wide hearts container (covers the whole viewport/body) */
+.page-hearts {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0; /* behind main content but above background */
+  overflow: hidden;
+}
+.page-hearts .bh {
+  position: absolute;
+  display: inline-block;
+  color: rgba(255, 107, 154, 0.75);
+  will-change: transform, opacity;
+  animation-name: floatBg;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.caption {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: 0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+.carousel-btn.prev {
+  left: 0.6rem;
+}
+.carousel-btn.next {
+  right: 0.6rem;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+.carousel-controls .indicators {
+  display: flex;
+  gap: 0.4rem;
+}
+.indicators button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+.indicators button.active {
+  background: var(--accent);
+}
+.play {
+  background: transparent;
+  border: 0;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.counter {
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 0.95rem;
+}
+.spacer {
+  width: 6px;
+}
+.control {
+  background: transparent;
+  border: 0;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.05rem;
+}
+
+.carousel-btn {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(4px);
+}
+
+/* make indicators and controls look a little elevated */
+.carousel-controls {
+  position: relative;
+  z-index: 5;
+}
+
+.thumbnails {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 1rem 0;
+  margin-top: 0.5rem;
+}
+.thumbnails img {
+  width: 84px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0.85;
+  border: 2px solid transparent;
+}
+.thumbnails img.active {
+  border-color: var(--accent);
+  opacity: 1;
+}
+
+/* hearts removed */
+
+@media (max-width: 720px) {
+  .slide img {
+    max-height: 60vh;
+  }
+  .thumbnails img {
+    width: 64px;
+    height: 44px;
+  }
+}
+
+/* Mobile-specific tweaks: hide heavy page-wide hearts and increase touch targets */
+@media (max-width: 720px) {
+  /* hide the page-wide decorative hearts for mobile to save CPU/battery */
+  .page-hearts {
+    display: none;
+  }
+
+  /* increase indicator hit area for easier tapping */
+  .indicators button {
+    width: 20px;
+    height: 20px;
+    margin: 0 6px;
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  /* make ribbon/heart smaller on small screens */
+  .ribbon {
+    padding: 0.6rem 1.2rem;
+  }
+  .heart {
+    width: 110px !important;
+    height: auto;
+  }
+
+  /* scale down scissors and make it easier to tap */
+  .scissors {
+    transform: translate(-50%, -48%) scale(0.92);
+    padding: 8px;
+  }
+}
