@@ -5,6 +5,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Ale y Fher</title>
     <link rel="stylesheet" href="style.css" />
+    <style>
+      /* Minimal inline styles for the procedural bouquet panel and trigger */
+      .heart-trigger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff6ea1, #ff9ccf);
+        color: #fff;
+        border: none;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+        font-size: 22px;
+        cursor: pointer;
+        margin: 0;
+      }
+      .bouquet-panel {
+        position: relative;
+        width: 320px;
+        max-width: 46vw;
+        min-width: 220px;
+        height: 320px;
+        background: linear-gradient(180deg, #111 0%, #0b0b0b 100%);
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        color: #fff;
+        overflow: hidden;
+        margin: 12px;
+        pointer-events: auto;
+        z-index: 4;
+      }
+      .bouquet-root {
+        width: 100%;
+        height: 100%;
+      }
+      /* make the bouquet panel responsive and sit next to carousel on wide screens */
+      @media (min-width: 980px) {
+        .carousel + .bouquet-panel {
+          display: inline-block;
+          vertical-align: top;
+          margin-left: 18px;
+        }
+      }
+      /* ensure the bouquet panel layout keeps the button under the black box */
+      .bouquet-panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+      .bouquet-root {
+        flex: 1 1 auto;
+        min-height: 180px;
+      }
+      .bouquet-actions {
+        flex: 0 0 auto;
+        pointer-events: auto;
+      }
+      @media (max-width: 600px) {
+        .bouquet-panel {
+          width: 100%;
+          height: 260px;
+          max-width: 100%;
+          margin: 10px 0;
+        }
+      }
+      /* layout: place carousel and bouquet side-by-side and center them; stack on small screens */
+      main.container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      /* carousel: take remaining space but reserve room for bouquet */
+      .carousel {
+        flex: 1 1 auto;
+        min-width: 360px;
+        max-width: calc(100% - 380px);
+      }
+      /* ensure the carousel viewport shows the letterbox with black bg; remove inner padding so slides fully fill it */
+      .carousel-viewport {
+        background: #000;
+        border-radius: 12px;
+        padding: 0;
+        overflow: hidden;
+      }
+      /* remove slide padding so each slide fully fills the viewport and no neighbor shows */
+      .slide {
+        padding: 0;
+      }
+      /* bouquet wrapper: contain panel + button and center them */
+      .bouquet-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 360px;
+        flex: 0 0 360px;
+        margin: 0;
+      }
+      .bouquet-actions {
+        margin-top: 10px;
+      }
+      @media (max-width: 760px) {
+        main.container {
+          flex-direction: column;
+          padding: 0 12px;
+        }
+        .carousel {
+          max-width: 100%;
+        }
+        .bouquet-wrapper {
+          width: 100%;
+          flex: none;
+          margin-top: 14px;
+        }
+      }
+    </style>
     <!-- favicon: use foto6 as site icon per request -->
     <link rel="icon" href="fotos/foto6.jpeg" type="image/jpeg" />
     <link rel="apple-touch-icon" href="fotos/foto6.jpeg" />
@@ -26,7 +148,7 @@
             <div class="ribbon">
               <span class="r-bg left" aria-hidden="true"></span>
               <span class="r-bg right" aria-hidden="true"></span>
-              <span class="r-text"><i>- - - Feliz día de San Valentín, mi amor - - -</i></span>
+              <span class="r-text"><i>- Feliz día de San Valentín, mi amor -</i></span>
             </div>
           </div>
           <div class="carousel-track" data-total="10">
@@ -65,9 +187,23 @@
         </div>
 
         <div class="carousel-controls">
-          <div class="indicators" role="tablist" aria-label="Indicadores"></div>
+          <div style="display: flex; align-items: center; gap: 12px">
+            <div class="indicators" role="tablist" aria-label="Indicadores"></div>
+          </div>
         </div>
       </section>
+      <!-- contenedor del cuadro negro y el botón del ramo -->
+      <div class="bouquet-wrapper">
+        <aside class="bouquet-panel" aria-hidden="false">
+          <div id="bouquetRoot" class="bouquet-root" aria-label="Ramo de flores"></div>
+        </aside>
+        <div
+          class="bouquet-actions"
+          style="display: flex; justify-content: center; margin-top: 10px"
+        >
+          <button id="bouquetBtn" class="heart-trigger" aria-label="Regalar ramo">❤</button>
+        </div>
+      </div>
     </main>
 
     <footer class="footer">
@@ -230,6 +366,175 @@
               openNow();
             }
           });
+        }
+
+        // allow opening the cover from an external button as well
+        function revealCover() {
+          if (!cover) return;
+          cover.classList.add('opened');
+          cover.addEventListener('transitionend', () => cover.remove(), { once: true });
+          try {
+            startAutoplay();
+          } catch (e) {
+            /* noop */
+          }
+        }
+
+        // openCoverBtn removed (left non-working heart) — no wiring needed
+
+        // -----------------------------
+        // Procedural bouquet generator
+        // -----------------------------
+        function rand(min, max) {
+          return min + Math.random() * (max - min);
+        }
+
+        function createSVG(w, h) {
+          const ns = 'http://www.w3.org/2000/svg';
+          const svg = document.createElementNS(ns, 'svg');
+          svg.setAttribute('width', w);
+          svg.setAttribute('height', h);
+          svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+          svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+          svg.style.display = 'block';
+          svg.style.width = '100%';
+          svg.style.height = '100%';
+          return svg;
+        }
+
+        function makeStem(svg, x, y, length, thickness, color) {
+          const ns = 'http://www.w3.org/2000/svg';
+          const path = document.createElementNS(ns, 'path');
+          const cx = x + rand(-12, 12);
+          const cy = y - length * 0.4;
+          const x2 = x + rand(-8, 8);
+          const y2 = y - length;
+          const d = `M ${x} ${y} C ${cx} ${cy} ${x2} ${y2} ${x2} ${y2}`;
+          path.setAttribute('d', d);
+          path.setAttribute('stroke', color);
+          path.setAttribute('stroke-width', thickness);
+          path.setAttribute('fill', 'none');
+          path.setAttribute('stroke-linecap', 'round');
+          path.style.opacity = '0';
+          path.style.transition = 'opacity .6s ease, stroke-width .6s ease';
+          svg.appendChild(path);
+          // animate in
+          setTimeout(() => (path.style.opacity = '1'), 80 + Math.random() * 240);
+          return path;
+        }
+
+        function makeFlower(svg, cx, cy, scale, palette) {
+          const ns = 'http://www.w3.org/2000/svg';
+          const g = document.createElementNS(ns, 'g');
+          g.setAttribute('transform', `translate(${cx},${cy}) scale(0.1)`);
+          g.style.transition = 'transform .7s cubic-bezier(.2,.9,.3,1), opacity .6s ease';
+          g.style.opacity = '0';
+          const petalCount = Math.floor(rand(5, 8));
+          const petalColor = palette[0];
+          const centerColor = palette[1];
+          for (let i = 0; i < petalCount; i++) {
+            const a = (i / petalCount) * Math.PI * 2;
+            const px = Math.cos(a) * 6 * scale;
+            const py = Math.sin(a) * 8 * scale;
+            const rx = 6 * scale;
+            const ry = 10 * scale;
+            const petal = document.createElementNS(ns, 'ellipse');
+            petal.setAttribute('cx', px);
+            petal.setAttribute('cy', py);
+            petal.setAttribute('rx', rx);
+            petal.setAttribute('ry', ry);
+            petal.setAttribute('fill', petalColor);
+            petal.setAttribute('transform', `rotate(${(a * 180) / Math.PI})`);
+            petal.style.opacity = '0.0';
+            petal.style.transition = 'opacity .6s ease, transform .7s ease';
+            g.appendChild(petal);
+            // animate petals slightly staggered
+            setTimeout(() => (petal.style.opacity = '1'), 160 + i * 40 + Math.random() * 120);
+          }
+          const center = document.createElementNS(ns, 'circle');
+          center.setAttribute('cx', 0);
+          center.setAttribute('cy', 0);
+          center.setAttribute('r', 4 * scale);
+          center.setAttribute('fill', centerColor);
+          g.appendChild(center);
+          svg.appendChild(g);
+          // final grow
+          setTimeout(
+            () => {
+              g.style.transform = `translate(${cx}px,${cy}px) scale(1)`;
+              g.style.opacity = '1';
+            },
+            200 + Math.random() * 300
+          );
+          return g;
+        }
+
+        function assembleBouquet(containerSelector, opts = {}) {
+          const container = document.querySelector(containerSelector);
+          if (!container) return;
+          const flowers = opts.flowers || 24; // default to more flowers for a fuller bouquet
+          // clear
+          container.innerHTML = '';
+          const rect = container.getBoundingClientRect();
+          const W = Math.max(200, Math.round(rect.width));
+          const H = Math.max(200, Math.round(rect.height));
+          const svg = createSVG(W, H);
+          container.appendChild(svg);
+          // palette choices
+          const palettes = [
+            ['#ff6ea1', '#ffd27f'],
+            ['#ff9ccf', '#fff1a8'],
+            ['#ffb6c1', '#ffd1a9'],
+            ['#f48fb1', '#ffecb3'],
+          ];
+
+          // stems origin near bottom center
+          const baseX = W / 2;
+          const baseY = H - 10;
+
+          for (let i = 0; i < flowers; i++) {
+            const offset = rand(-W * 0.36, W * 0.36);
+            const x = baseX + offset;
+            const length = rand(H * 0.32, H * 0.62);
+            const thickness = rand(1, 2.6).toFixed(2);
+            const green = `hsl(${rand(95, 140)}, ${rand(35, 60)}%, ${rand(20, 35)}%)`;
+            // draw stem
+            makeStem(svg, x, baseY, length, thickness, green);
+            // flower at tip
+            const palette = palettes[Math.floor(rand(0, palettes.length))];
+            const scale = rand(1, 1.6);
+            makeFlower(svg, x + rand(-8, 8), baseY - length, scale, palette);
+          }
+
+          // add a simple wrapper (paper) triangle
+          const ns = 'http://www.w3.org/2000/svg';
+          const wrap = document.createElementNS(ns, 'path');
+          const left = baseX - 80;
+          const right = baseX + 80;
+          const topY = baseY - Math.min(H * 0.48, 180);
+          const d = `M ${left} ${baseY} L ${baseX} ${topY} L ${right} ${baseY} Z`;
+          wrap.setAttribute('d', d);
+          wrap.setAttribute('fill', 'rgba(255,255,255,0.06)');
+          wrap.setAttribute('stroke', 'rgba(255,255,255,0.06)');
+          wrap.style.opacity = '0';
+          wrap.style.transition = 'opacity .8s ease';
+          svg.appendChild(wrap);
+          setTimeout(() => (wrap.style.opacity = '1'), 400);
+        }
+
+        // expose for debugging and delegated handlers
+        try {
+          window.assembleBouquet = assembleBouquet;
+        } catch (e) {
+          /* ignore if cross-origin restrictions, unlikely here */
+        }
+
+        // wire the bouquet button: generate a fuller bouquet when clicked
+        const bouquetBtn = document.getElementById('bouquetBtn');
+        if (bouquetBtn) {
+          bouquetBtn.addEventListener('click', () =>
+            assembleBouquet('#bouquetRoot', { flowers: 24 })
+          );
         }
       })();
     </script>
