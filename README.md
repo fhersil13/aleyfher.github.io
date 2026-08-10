@@ -4,7 +4,7 @@ A little corner of the internet, made for my favorite person.
 
 Unwrap the ribbon to reveal a carousel of our favorite memories, then tap the heart to watch a bouquet bloom just for her. 🌸
 
-**[💐 Open it →](https://www.fherneysilva.com/valentine/)**
+**[💐 Open it →](https://fherneysilva.github.io/valentine/)**
 
 ---
 
