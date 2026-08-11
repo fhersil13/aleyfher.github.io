@@ -4,6 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Ale y Fher</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=Karla:wght@400;700&display=swap"
+    />
     <link rel="stylesheet" href="style.css" />
     <style>
       /* Minimal inline styles for the procedural bouquet panel and trigger */
@@ -11,16 +17,39 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 48px;
-        height: 48px;
+        width: 52px;
+        height: 52px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #ff6ea1, #ff9ccf);
-        color: #fff;
+        background: linear-gradient(135deg, var(--accent-bright), var(--accent));
         border: none;
-        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
-        font-size: 22px;
+        box-shadow: 0 8px 22px rgba(124, 35, 64, 0.38);
         cursor: pointer;
         margin: 0;
+        animation: heartPulse 2600ms ease-in-out infinite;
+      }
+      .heart-trigger:hover,
+      .heart-trigger:focus-visible {
+        animation-duration: 900ms;
+      }
+      .heart-trigger .heart-shape {
+        width: 16px;
+        height: 16px;
+        color: #fdf1ee;
+      }
+      @keyframes heartPulse {
+        0%,
+        100% {
+          box-shadow: 0 8px 22px rgba(124, 35, 64, 0.38);
+        }
+        50% {
+          box-shadow: 0 8px 28px rgba(124, 35, 64, 0.6);
+        }
+      }
+      .bouquet-hint {
+        font-family: 'Karla', sans-serif;
+        font-size: 0.82rem;
+        color: var(--muted);
+        margin-top: 8px;
       }
       .bouquet-panel {
         position: relative;
@@ -28,11 +57,11 @@
         max-width: 46vw;
         min-width: 220px;
         height: 320px;
-        background: linear-gradient(180deg, #111 0%, #0b0b0b 100%);
+        background: linear-gradient(180deg, var(--ink) 0%, #170b10 100%);
         border-radius: 12px;
         padding: 10px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-        color: #fff;
+        box-shadow: 0 10px 30px rgba(43, 20, 28, 0.5);
+        color: #fdf1ee;
         overflow: hidden;
         margin: 12px;
         pointer-events: auto;
@@ -89,9 +118,9 @@
         min-width: 360px;
         max-width: calc(100% - 380px);
       }
-      /* ensure the carousel viewport shows the letterbox with black bg; remove inner padding so slides fully fill it */
+      /* ensure the carousel viewport shows the letterbox; remove inner padding so slides fully fill it */
       .carousel-viewport {
-        background: #000;
+        background: var(--ink);
         border-radius: 12px;
         padding: 0;
         overflow: hidden;
@@ -133,6 +162,10 @@
   </head>
   <body>
     <div class="page-hearts" aria-hidden="true"></div>
+    <header class="hero">
+      <p class="hero-eyebrow">14 de febrero</p>
+      <h1>Para Ale, antes de que abras esto —</h1>
+    </header>
     <main class="container">
       <section class="carousel" aria-label="Carrusel de fotos">
         <div class="carousel-viewport">
@@ -199,16 +232,20 @@
         </aside>
         <div
           class="bouquet-actions"
-          style="display: flex; justify-content: center; margin-top: 10px"
+          style="display: flex; flex-direction: column; align-items: center; margin-top: 10px"
         >
-          <button id="bouquetBtn" class="heart-trigger" aria-label="Regalar ramo">❤</button>
+          <button id="bouquetBtn" class="heart-trigger" aria-label="Ver el ramo">
+            <span class="heart-shape" aria-hidden="true"></span>
+          </button>
+          <span class="bouquet-hint">Toca para que florezca</span>
         </div>
       </div>
     </main>
 
     <footer class="footer">
-      <small><i>Con cariño y mucho amor, Fher.<?= new Date().getFullYear() ?></i></small>
-      <div class="cover-hint">A&F🧡</div>
+      <div class="sig-rule"></div>
+      <p class="sig-line">Con todo mi cariño, Fher</p>
+      <p class="sig-mono">A &amp; F</p>
     </footer>
 
     <script>
@@ -307,11 +344,13 @@
           const max = Math.min(Math.max(6, count), 200);
           for (let i = 0; i < max; i++) {
             const el = document.createElement('span');
-            el.className = 'bh';
-            el.innerText = '❤';
+            el.className = 'bh heart-shape';
             // randomized styles
-            const size = 8 + Math.round(Math.random() * 36); // px
-            el.style.fontSize = size + 'px';
+            const size = 7 + Math.round(Math.random() * 18); // px
+            el.style.width = size + 'px';
+            el.style.height = size + 'px';
+            const shade = Math.random() < 0.5 ? '166, 51, 90' : '169, 121, 58'; // wine / gold
+            el.style.color = `rgba(${shade}, 0.9)`;
             el.style.left = Math.round(Math.random() * 100) + '%';
             // vertical start varies depending on container type; use vh for page-wide
             el.style.bottom = Math.random() * 100 - 10 + 'vh';

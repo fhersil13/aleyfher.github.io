@@ -1,16 +1,22 @@
 /* Estilos para la galería de San Valentín */
 /* Estilos para la galería de San Valentín */
 :root {
-  --bg: #fff0f6;
-  --card: #fff;
-  --accent: #ff6b9a;
-  --muted: #666;
+  --bg: #fbf3f1;
+  --card: #fffaf9;
+  --accent: #7c2340;
+  --accent-bright: #a6335a;
+  --muted: #6b4552;
+  --ink: #2b141c;
+  --gold: #a9793a;
+  --gold-soft: #d9ad6b;
+  --blush: #f3d9d6;
 }
 * {
   box-sizing: border-box;
 }
 body {
   font-family:
+    'Karla',
     system-ui,
     -apple-system,
     Segoe UI,
@@ -19,24 +25,42 @@ body {
     Arial;
   margin: 0;
   background: var(--bg);
-  color: #222;
+  color: var(--ink);
 }
 .hero {
-  padding: 3rem 1rem;
+  padding: 2.5rem 1rem 1rem;
   text-align: center;
-  background: linear-gradient(180deg, rgba(255, 107, 154, 0.08), transparent);
+  background: linear-gradient(180deg, rgba(124, 35, 64, 0.06), transparent);
   position: relative;
   overflow: hidden;
 }
-/* hearts removed */
+.hero-eyebrow {
+  font-family: 'Karla', sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 0.6rem;
+}
 .hero h1 {
-  font-size: 2.25rem;
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.5rem, 4vw, 2.15rem);
   margin: 0;
   color: var(--accent);
 }
 .hero p {
   margin: 0.5rem 0 0;
   color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 .container {
   max-width: 1000px;
@@ -82,8 +106,28 @@ body {
 }
 .footer {
   text-align: center;
-  padding: 2rem 1rem;
+  padding: 2.5rem 1rem 3rem;
   color: var(--muted);
+}
+.footer .sig-rule {
+  width: 46px;
+  height: 1px;
+  background: var(--gold);
+  margin: 0 auto 1rem;
+}
+.footer .sig-line {
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.footer .sig-mono {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
 }
 
 /* Carousel styles */
@@ -94,9 +138,8 @@ body {
 .carousel-viewport {
   overflow: hidden;
   border-radius: 12px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
-  /* background behind photos set to black per user request */
-  background: #000;
+  box-shadow: 0 6px 24px rgba(43, 20, 28, 0.18);
+  background: var(--ink);
 }
 
 /* opening cover (ribbon/talon) */
@@ -110,7 +153,7 @@ body {
   flex-direction: column;
   gap: 0.6rem;
   pointer-events: auto;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 246, 250, 0.85));
+  background: linear-gradient(180deg, rgba(251, 243, 241, 0.95), rgba(243, 217, 214, 0.88));
   transition:
     transform 700ms cubic-bezier(0.2, 0.9, 0.25, 1),
     opacity 500ms ease;
@@ -128,10 +171,10 @@ body {
   top: -6px;
   bottom: -6px;
   width: 120%;
-  background: linear-gradient(90deg, #ff9cbc 0%, #ff6b9a 100%);
+  background: linear-gradient(90deg, var(--accent-bright) 0%, var(--accent) 100%);
   box-shadow:
-    0 8px 30px rgba(255, 107, 154, 0.18),
-    0 2px 8px rgba(0, 0, 0, 0.12);
+    0 8px 30px rgba(124, 35, 64, 0.22),
+    0 2px 8px rgba(43, 20, 28, 0.16);
   border-radius: 14px;
   transition:
     transform 700ms cubic-bezier(0.2, 0.9, 0.25, 1),
@@ -148,15 +191,17 @@ body {
 }
 .ribbon .r-text {
   position: relative;
-  color: #fff;
-  font-weight: 800;
-  font-size: 1.12rem;
+  color: #fdf1ee;
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.18rem;
   z-index: 70;
   display: inline-block;
   transform-origin: center;
 }
 .cover-hint {
-  color: #b3476b;
+  color: var(--gold);
   font-size: 0.9rem;
   opacity: 0.95;
   transition:
@@ -197,7 +242,7 @@ body {
 .slide {
   min-width: 100%;
   position: relative;
-  background: #000; /* black background behind images */
+  background: var(--ink);
   filter: brightness(0.92) saturate(0.98);
   transform: scale(1);
   transition:
@@ -234,11 +279,33 @@ body {
   z-index: 1;
   overflow: hidden;
 }
+/* drawn heart shape: a rotated square plus two circles, no glyph/emoji/SVG needed */
+.heart-shape {
+  position: relative;
+  display: inline-block;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+.heart-shape::before,
+.heart-shape::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: currentColor;
+}
+.heart-shape::before {
+  top: -50%;
+  left: 0;
+}
+.heart-shape::after {
+  top: 0;
+  left: -50%;
+}
+
 .bg-hearts .bh {
   position: absolute;
-  display: inline-block;
-  font-size: 14px;
-  color: rgba(255, 107, 154, 0.9);
   opacity: 0.9;
   transform: translateY(0);
   will-change: transform, opacity;
@@ -246,14 +313,14 @@ body {
 
 @keyframes floatBg {
   0% {
-    transform: translateY(12vh) translateX(0) scale(0.85);
+    transform: translateY(12vh) translateX(0) scale(0.85) rotate(45deg);
     opacity: 0;
   }
   10% {
     opacity: 0.9;
   }
   100% {
-    transform: translateY(-40vh) translateX(30px) scale(1.05);
+    transform: translateY(-40vh) translateX(30px) scale(1.05) rotate(45deg);
     opacity: 0;
   }
 }
@@ -274,8 +341,6 @@ body {
 }
 .page-hearts .bh {
   position: absolute;
-  display: inline-block;
-  color: rgba(255, 107, 154, 0.75);
   will-change: transform, opacity;
   animation-name: floatBg;
   animation-timing-function: linear;
@@ -327,7 +392,7 @@ body {
   height: 10px;
   border-radius: 50%;
   border: 0;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(169, 121, 58, 0.28);
   cursor: pointer;
 }
 .indicators button.active {
