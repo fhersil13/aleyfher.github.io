@@ -165,6 +165,11 @@
     <header class="hero">
       <p class="hero-eyebrow">14 de febrero</p>
       <h1>Para Ale, antes de que abras esto —</h1>
+      <div class="together">
+        <span class="together-num" id="togetherDays">0</span>
+        <span class="together-label">días juntos</span>
+        <span class="together-clock" id="togetherClock">00:00:00</span>
+      </div>
     </header>
     <main class="container">
       <section class="carousel" aria-label="Carrusel de fotos">
@@ -383,6 +388,27 @@
         goTo(0);
         slides.forEach((s, i) => s.classList.toggle('active', i === 0));
         updateIndicators();
+
+        // "días juntos" live counter, since 26 jul 2025, 4:00 p.m.
+        (function startTogetherCounter() {
+          const daysEl = document.getElementById('togetherDays');
+          const clockEl = document.getElementById('togetherClock');
+          if (!daysEl || !clockEl) return;
+          const start = new Date(2025, 6, 26, 16, 0, 0);
+          const pad = (n) => String(n).padStart(2, '0');
+          function tick() {
+            const diff = Date.now() - start.getTime();
+            const totalSeconds = Math.max(0, Math.floor(diff / 1000));
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            daysEl.textContent = days;
+            clockEl.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+          }
+          tick();
+          setInterval(tick, 1000);
+        })();
 
         // opening cover behavior: remove on click (or Enter/Space) and start autoplay
         const cover = document.getElementById('openingCover');

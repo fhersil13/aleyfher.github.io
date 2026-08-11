@@ -55,6 +55,37 @@ body {
   margin: 0.5rem 0 0;
   color: var(--muted);
 }
+.together {
+  margin-top: 1.1rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  column-gap: 0.55rem;
+  row-gap: 0.2rem;
+}
+.together-num {
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.7rem;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.together-label {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.together-clock {
+  font-size: 0.72rem;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.together-clock::before {
+  content: '· ';
+  color: var(--muted);
+}
 
 @media (prefers-reduced-motion: reduce) {
   * {
